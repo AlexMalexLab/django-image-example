@@ -1,0 +1,46 @@
+{% load static %}
+
+<script type="text/x-template" id="uploads-form-template">
+    <div class="form mb30">
+        <div class="form__columns">
+            <div class="form__column">
+                <div class="form__f mb10">Фото для загрузки:</div>
+                <div class="ugallery ugallery_big ugallery_first" @click="selectImg">
+                    <div class="ugallery__elm ugallery__elm_add" ></div>
+                </div>
+            </div>
+            <div class="form__column" :class="{ 'has-error': imagesErrors.length }">
+                <div class="form__f mb10">Загруженные фото:</div>
+                <div class="ugallery ugallery_big">
+                    <div v-for="img in images"
+                          class="ugallery__elm" :class="{'ugallery__elm_sel': imageSelected == img.id}">
+
+                        <img class="ugallery__img ugallery__img_open"
+                             :src="'{% get_media_prefix %}'+previewImg(img.file)+'?ts='+Date.now()"
+                             @click="open('{% get_media_prefix %}'+img.file)"/>
+                        <div class="ugallery__cap ugallery__act ugallery__cap_delete" @click="actDel(img.id)"></div>
+                        <div class="ugallery__cap ugallery__act ugallery__cap_rotate" @click="actImg(img.id, 'rotate')"></div>
+                        <div class="ugallery__cap ugallery__act ugallery__cap_unrotate" @click="actImg(img.id, 'unrotate')"></div>
+                        <div class="ugallery__cap ugallery__act ugallery__cap_open" @click="actSel(img.id)"></div>
+                    </div>
+                    <div class="ugallery__elm ugallery__elm_def" v-if="images.length < 6" v-for="n in 6-images.length"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-tape">
+            <div v-for="bar in progressBars" class="progress-bar" :style="{width: bar+'%'}">
+                <div v-if="bar == 0">
+                    <img src="{% static 'images/indicator.gif' %}"/>
+                </div>
+                <div v-else>[[ bar ]]%</div>
+            </div>
+        </div>
+        <input class="imgf" type="file" name="image" accept="image/*" multiple="multiple" @change="sendImages"/>
+
+        <div class="form__f mb10 mt10 resf" v-if="imagesErrors.length">
+            <div v-for="item in imagesErrors">[[ item ]]</div>
+        </div>
+
+    </div>
+</script>
